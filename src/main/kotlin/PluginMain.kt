@@ -77,7 +77,7 @@ object PluginMain : KotlinPlugin(
             }
             if (message.contentToString().startsWith("#medal ")) {
                 val playerName = message.contentToString().replace("#medal ", "")
-                val msg = SQLManager.getInstance().getPlayerMedals(playerName)
+                val msg = "玩家" + playerName + "的勋章: " + SQLManager.getInstance().getPlayerMedals(playerName)
                 if (msg.isEmpty()) {
                     group.sendMessage("该玩家无任何勋章")
                 } else {
