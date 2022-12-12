@@ -1,4 +1,4 @@
-package org.example.mirai.plugin;
+package org.example.mirai;
 
 import kotlin.Lazy;
 import kotlin.LazyKt;
