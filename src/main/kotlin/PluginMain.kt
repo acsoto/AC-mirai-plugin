@@ -3,7 +3,6 @@ package cc.mcac.mirai.plugin
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.value
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
@@ -54,7 +53,6 @@ object PluginMain : KotlinPlugin(
 ) {
     override fun onEnable() {
         logger.info { "Plugin loaded" }
-        //配置文件目录 "${dataFolder.absolutePath}/"
         Config.reload()
         if (Config.host == "") {
             logger.warning { "please fill database information in config.yml" }
@@ -67,12 +65,8 @@ object PluginMain : KotlinPlugin(
 //            if (message.contentToString().startsWith("复读")) {
 //                group.sendMessage(message.contentToString().replace("复读", ""))
 //            }
-            if (message.contentToString() == "hi") {
-//                //群内发送
-//                group.sendMessage("hi")
-//                //向发送者私聊发送消息
-//                sender.sendMessage("hi")
-//                //不继续处理
+            if (message.contentToString() == "#ls") {
+                group.sendMessage(SQLManager.getInstance().playerList)
                 return@subscribeAlways
             }
             if (message.contentToString().startsWith("#medal ")) {
@@ -135,9 +129,10 @@ object PluginMain : KotlinPlugin(
 
     object Config : ReadOnlyPluginConfig("config") {
         val host: String by value()
-        val database: String by value()
-        val username: String by value()
-        val password: String by value()
+        val username_medal: String by value()
+        val username_info: String by value()
+        val password_medal: String by value()
+        val password_info: String by value()
     }
 
 
@@ -154,6 +149,6 @@ object TestCommand : SimpleCommand(
     // 通过 /foo 调用, 参数自动解析
     @Handler
     suspend fun CommandSender.handle() { // 函数名随意, 但参数需要按顺序放置.
-        PluginMain.logger.info { SQLManager.getInstance().getPlayerMedals("zhou_zhou") }
+        PluginMain.logger.info { SQLManager.getInstance().playerList }
     }
 }
