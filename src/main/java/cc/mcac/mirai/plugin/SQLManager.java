@@ -67,23 +67,23 @@ public class SQLManager {
     }
 
     public String getPlayerList() {
+        int playerNumber = 0;
         StringBuilder playerListMsg = new StringBuilder();
         try {
             PreparedStatement ps = connectionInfo.prepareStatement(
-                    "SELECT * FROM server_player_list WHERE player_number = (SELECT MAX(player_number) FROM server_player_list )"
+                    "SELECT * FROM server_player_list"
             );
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                playerListMsg.append("当前在线人数: ")
-                        .append(rs.getInt("player_number"))
-                        .append("人, ")
-                        .append("在线玩家: ")
-                        .append(rs.getString("player_list"));
+            while (rs.next()) {
+                if (rs.getInt("player_number") > 0) {
+                    playerNumber += rs.getInt("player_number");
+                    playerListMsg.append(rs.getString("player_list"));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return playerListMsg.toString();
+        return "当前在线人数: " + playerNumber + " 人, " + "在线玩家: " + playerListMsg;
     }
 
 
