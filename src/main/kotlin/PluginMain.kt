@@ -19,6 +19,7 @@ import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
 import net.mamoe.mirai.utils.info
 import net.mamoe.mirai.utils.warning
+import kotlin.random.Random
 
 /**
  * 使用 kotlin 版请把
@@ -78,6 +79,15 @@ object PluginMain : KotlinPlugin(
                     group.sendMessage(msg)
                 }
             }
+            if (message.contentToString().startsWith("#抽奖 ")) {
+                if (hasCratePermission(sender)) {
+                    val content = message.contentToString().replace("#抽奖 ", "")
+                    val args = content.split(" ")
+                    val prize = args[0]
+                    val random = (args.indices - 1).random() + 1
+                    group.sendMessage("恭喜 " + args[random] + " 获得 " + prize)
+                }
+            }
             //分类示例
 //            message.forEach {
 //                //循环每个元素在消息里
@@ -120,11 +130,22 @@ object PluginMain : KotlinPlugin(
         PermissionService.INSTANCE.register(permissionId("my-permission"), "一条自定义权限", parentPermission)
     }
 
+    private val cratePermission by lazy {
+        PermissionService.INSTANCE.register(permissionId("crate"), "抽奖权限", parentPermission)
+    }
+
     public fun hasCustomPermission(sender: User): Boolean {
         return when (sender) {
             is Member -> AbstractPermitteeId.ExactMember(sender.group.id, sender.id)
             else -> AbstractPermitteeId.ExactUser(sender.id)
         }.hasPermission(myCustomPermission)
+    }
+
+    public fun hasCratePermission(sender: User): Boolean {
+        return when (sender) {
+            is Member -> AbstractPermitteeId.ExactMember(sender.group.id, sender.id)
+            else -> AbstractPermitteeId.ExactUser(sender.id)
+        }.hasPermission(cratePermission)
     }
 
     object Config : ReadOnlyPluginConfig("config") {
